@@ -55,5 +55,17 @@ public class LivroDAO {
 		return list;
 		
 	}
+	
+	public void updateLivroById(int id, Livro livro) throws SQLException {
+		Statement myStat = null;
+		
+		myStat = myConn.createStatement();
+		String query = String.format("UPDATE Livros SET "
+				+ " title = '%s' , author = '%s' , gender = '%s', year = %s, isRead = %b WHERE id = %s", 
+				livro.getTitle(), livro.getAuthor(), livro.getGender(), livro.getYear(), livro.isRead(), id);
+		System.out.println(query);
+		myStat.executeUpdate(query);
+
+	}
 
 }

@@ -1,40 +1,47 @@
 package Controllers;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import DAO.LivroDAO;
+import Listeners.TableLivroListener;
 import Models.Livro;
 
-public class ExibirController {
-
-//	MOCK
-//	public String column[]={"ID","NAME","SALARY"}; 
-//	public String data[][] = { {"101","Amit","670000"},    
-//            {"102","Jai","780000"},    
-//            {"101","Sachin","700000"}};   
-
+public class ExibirController implements ActionListener  {
 	
 	private JTable table;
 	public String column[]={"Título","Autor", "Genero", "Ano", "Já Leu?"};         
-
-	public ExibirController(JTable table) {
+	private DefaultTableModel model;
+	
+	public ExibirController(JTable table) throws SQLException {
 		this.table = table;
+		this.model = (DefaultTableModel) table.getModel();
+//		table.getModel().addTableModelListener(new TableLivroListener(table));
+		this.setTableColumns();
 		this.getLivros();
+		table.getModel().addTableModelListener(new TableLivroListener(table));
+
+	}
+	
+	private void setTableColumns() {
+		for (String columnName : this.column) {
+			model.addColumn(columnName);
+		}
 	}
 	
 	public String getLivros() {
 		
-		DefaultTableModel model = (DefaultTableModel) table.getModel();
-	
-		
-		for (String columnName : this.column) {
-			model.addColumn(columnName);
-		}
-		
+		this.model.setRowCount(0);
+			
 		
 		try {
 			LivroDAO livroDao = new LivroDAO();
@@ -45,7 +52,7 @@ public class ExibirController {
 						livro.getTitle(),
 						livro.getAuthor(),
 						livro.getGender(),
-						livro.getAuthor(),
+						livro.getYear(),
 						livro.isRead()
 				});
 			}
@@ -57,6 +64,15 @@ public class ExibirController {
 		return null;
 		
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		this.getLivros();
+		
+	}
+
+
+
 
 	
 }
